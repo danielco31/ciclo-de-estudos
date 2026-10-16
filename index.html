@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body class="min-h-screen">
   <div class="app-shell max-w-6xl mx-auto px-4 pt-6 pb-16">
@@ -70,30 +70,6 @@
 
       <!-- Aba 1: Trilha do Ciclo (Visão 100% focada nas matérias em ciclo) -->
       <section id="tabCycleView" class="tab-view flex flex-col gap-6" role="tabpanel" aria-labelledby="tabBtnCycle">
-
-        <!-- Missão atual -->
-        <div class="active-focus-card pixel-box p-5" id="activeFocusCard" style="background:#3b2a82">
-          <div class="font-pixel text-sm text-yellow-300 mb-3 blink">▶ MISSÃO ATUAL</div>
-          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <div>
-              <div class="flex flex-wrap items-center gap-2 mb-3">
-                <span class="pixel-tag" id="focusStepNumber">Bloco 1 de 4</span>
-                <span class="pixel-tag" id="focusRoundTag">1ª Passagem</span>
-                <span class="pixel-tag" id="focusDayTag">Dia 1 · 0/6</span>
-              </div>
-              <h2 class="focus-subject-name font-pixel text-2xl sm:text-3xl text-white leading-snug" id="focusSubjectName">Selecione ou inicie uma matéria</h2>
-            </div>
-            <button id="btnCompleteCurrent" class="pixel-btn green lg">✔ Concluir e Próxima</button>
-          </div>
-
-          <div class="progress-section">
-            <div class="flex justify-between font-pixel text-sm text-purple-100 mb-2 gap-2">
-              <span>PROGRESSO DO CICLO</span>
-              <span id="progressPercentage">0%</span>
-            </div>
-            <div class="pixel-bar"><div class="pixel-bar-fill" id="progressFill" style="width:0%"></div></div>
-          </div>
-        </div>
 
         <!-- Trilha -->
         <div class="glass-card vertical-cycle-panel pixel-box p-5">
@@ -171,7 +147,7 @@
 
   <script src="app.js"></script>
   <script src="sheets.js"></script>
-  <script src="gamify.js?v=6"></script>
+  <script src="gamify.js?v=7"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});

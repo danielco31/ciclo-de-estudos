@@ -389,6 +389,7 @@ function renderSubjectsList() {
 
 function renderActiveFocusCard() {
   const nameEl = document.getElementById('focusSubjectName');
+  if (!nameEl) return;
   const stepNumEl = document.getElementById('focusStepNumber');
   const roundTagEl = document.getElementById('focusRoundTag');
   const btnComplete = document.getElementById('btnCompleteCurrent');
