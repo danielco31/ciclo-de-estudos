@@ -1,0 +1,17 @@
+{
+  "name": "ciclo-de-estudos-app",
+  "version": "1.0.0",
+  "description": "Aplicativo para ciclo de estudos vertical com pesos e repetições",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "dev": "python3 -m http.server 3000"
+  },
+  "keywords": [
+    "ciclo-de-estudos",
+    "estudos",
+    "produtividade",
+    "concursos"
+  ],
+  "author": "",
+  "license": "MIT"
+}

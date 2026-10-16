@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciclo de Estudos | Gestão Vertical de Estudos</title>
+  <meta name="description" content="Aplicativo inteligente para criação e acompanhamento de ciclos de estudo verticais com pesos e repetições automáticas.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Ciclo">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">Ciclo de Estudos</h1>
+          <p class="brand-subtitle">Organização e progressão vertical por pesos</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="cycle-badge" id="goalBadge">
+          <label class="badge-label" for="dailyGoal">Meta diária</label>
+          <input type="number" id="dailyGoal" class="input-text" min="1" max="30" value="6" style="width:60px;padding:2px 6px;text-align:center;">
+        </div>
+        <div class="cycle-badge" id="cycleBadge">
+          <span class="badge-label">Ciclo Atual</span>
+          <span class="badge-value" id="currentCycleNumber">#1</span>
+        </div>
+        <button id="btnResetCycle" class="btn btn-secondary" title="Reiniciar progresso do ciclo atual">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Reiniciar Ciclo
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Matérias e Configurações -->
+      <section class="sidebar-panel">
+        <!-- Card: Cadastrar Matéria -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              Adicionar Matéria
+            </h2>
+          </div>
+          <form id="subjectForm" class="form-stack">
+            <div class="form-group">
+              <label for="subjectName">Nome da Disciplina</label>
+              <input type="text" id="subjectName" class="input-text" placeholder="Ex: Português, Direito Constitucional..." required autocomplete="off">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="subjectWeight">Peso (Repetições)</label>
+                <div class="weight-picker">
+                  <input type="number" id="subjectWeight" class="input-text weight-number" min="1" max="10" value="1" required>
+                  <span class="weight-hint" id="weightExplanation">Aparecerá 1x no ciclo</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="subjectColor">Cor da Tag</label>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="subjectColor" class="input-color" value="#6366f1">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="btnAddSubject">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Incluir no Ciclo
+            </button>
+          </form>
+        </div>
+
+        <!-- Card: Matérias Cadastradas -->
+        <div class="glass-card subjects-list-card">
+          <div class="card-header flex-between">
+            <h2 class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+              Matérias Cadastradas
+            </h2>
+            <span class="badge-counter" id="subjectCountBadge">0 matérias</span>
+          </div>
+          
+          <div id="subjectsContainer" class="subjects-list">
+            <!-- Dynamic subjects listed here -->
+          </div>
+          
+          <div class="card-footer-note">
+            💡 <em>Matérias com peso 2+ aparecerão na 1ª coluna e novamente nas rodadas abaixo.</em>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Ciclo Vertical Ativo -->
+      <section class="main-content">
+        <!-- Active Subject Banner -->
+        <div class="active-focus-card" id="activeFocusCard">
+          <div class="focus-status-label">Em Estudo Agora</div>
+          <div class="focus-body">
+            <div class="focus-info">
+              <div class="focus-meta">
+                <span class="focus-step-num" id="focusStepNumber">Bloco 1 de 4</span>
+                <span class="focus-round-tag" id="focusRoundTag">1ª Passagem</span>
+                <span class="focus-round-tag" id="focusDayTag">Dia 1 · 0/6</span>
+              </div>
+              <h2 class="focus-subject-name" id="focusSubjectName">Selecione ou inicie uma matéria</h2>
+            </div>
+            <div class="focus-actions">
+              <button id="btnCompleteCurrent" class="btn btn-success btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Concluir e Próxima
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-section">
+            <div class="progress-labels">
+              <span>Progresso da Rodada Vertical</span>
+              <span id="progressPercentage">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertical Study Cycle List -->
+        <div class="glass-card vertical-cycle-panel">
+          <div class="card-header flex-between">
+            <div>
+              <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="6" x2="21" y2="6"/>
+                  <line x1="8" y1="12" x2="21" y2="12"/>
+                  <line x1="8" y1="18" x2="21" y2="18"/>
+                  <line x1="3" y1="6" x2="3.01" y2="6"/>
+                  <line x1="3" y1="12" x2="3.01" y2="12"/>
+                  <line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+                Trilha Vertical do Ciclo
+              </h2>
+              <p class="card-desc">As matérias são distribuídas em ordem vertical por rodadas de peso</p>
+            </div>
+            <div class="cycle-legend">
+              <span class="legend-item"><span class="legend-dot status-done"></span> Feito</span>
+              <span class="legend-item"><span class="legend-dot status-active"></span> Atual</span>
+              <span class="legend-item"><span class="legend-dot status-pending"></span> Pendente</span>
+            </div>
+          </div>
+
+          <div id="cycleContainer" class="vertical-cycle-timeline">
+            <!-- Timeline elements dynamically generated -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal de Conclusão do Ciclo -->
+    <div id="congratsModal" class="modal-overlay hidden">
+      <div class="modal-content glass-card">
+        <div class="modal-icon">🎉</div>
+        <h2 class="modal-title">Ciclo Concluído com Sucesso!</h2>
+        <p class="modal-text">Você completou todas as rodadas e blocos do ciclo de estudos atual. Deseja reiniciar a trilha para o próximo ciclo?</p>
+        <div class="modal-actions">
+          <button id="btnModalNextCycle" class="btn btn-primary btn-lg">Iniciar Novo Ciclo</button>
+          <button id="btnModalClose" class="btn btn-secondary">Apenas Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
