@@ -60,6 +60,7 @@ function getDailyGoal() {
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+    if (typeof scheduleSheetPush === 'function') scheduleSheetPush();
   } catch (err) {
     console.error('Erro ao salvar no LocalStorage:', err);
   }
