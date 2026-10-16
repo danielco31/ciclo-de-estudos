@@ -182,7 +182,7 @@ function setupEventListeners() {
   // Botão Concluir Matéria Atual
   const btnCompleteCurrent = document.getElementById('btnCompleteCurrent');
   if (btnCompleteCurrent) {
-    btnCompleteCurrent.addEventListener('click', completeCurrentStep);
+    // clique tratado por btnComplete.onclick em renderActiveFocusCard (evita disparo duplo)
   }
 
   // Botão Reiniciar Ciclo

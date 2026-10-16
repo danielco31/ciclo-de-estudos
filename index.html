@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ciclo de Estudos | Gestão Vertical de Estudos</title>
-  <meta name="description" content="Aplicativo inteligente para criação e acompanhamento de ciclos de estudo verticais com pesos e repetições automáticas.">
+  <title>Ciclo de Estudos | Aventura de Estudos Gamificada</title>
+  <meta name="description" content="Ciclo de estudos vertical por pesos em estilo pixel art gamificado, com XP, níveis e meta diária.">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b0f19">
+  <meta name="theme-color" content="#140b2e">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Ciclo">
@@ -14,192 +14,145 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
-<body>
-  <div class="app-shell">
-    <!-- Top Header -->
-    <header class="app-header">
-      <div class="brand">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-          </svg>
+<body class="min-h-screen">
+  <div class="app-shell max-w-6xl mx-auto px-4 pt-6 pb-16">
+
+    <!-- Header / HUD -->
+    <header class="app-header pixel-box p-4 mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="brand flex items-center gap-4">
+          <div class="brand-icon w-14 h-14 bg-yellow-300 border-4 border-black flex items-center justify-center text-3xl floaty" aria-hidden="true">⚔️</div>
+          <div>
+            <h1 class="brand-title font-pixel text-xl sm:text-2xl text-yellow-300 leading-snug">CICLO DE ESTUDOS</h1>
+            <p class="brand-subtitle text-purple-100 text-base">Complete as fases e suba de nível!</p>
+          </div>
         </div>
-        <div>
-          <h1 class="brand-title">Ciclo de Estudos</h1>
-          <p class="brand-subtitle">Organização e progressão vertical por pesos</p>
+
+        <div class="header-actions flex flex-wrap items-center gap-3">
+          <div class="cycle-badge pixel-box-dark px-3 py-2 flex items-center gap-2" id="goalBadge">
+            <label class="badge-label font-pixel text-sm text-cyan-300" for="dailyGoal">META/DIA</label>
+            <input type="number" id="dailyGoal" class="pixel-input" min="1" max="30" value="6" style="width:70px;text-align:center;">
+          </div>
+          <div class="cycle-badge pixel-box-dark px-3 py-2 flex items-center gap-2" id="cycleBadge">
+            <span class="badge-label font-pixel text-sm text-cyan-300">CICLO</span>
+            <span class="badge-value font-pixel text-lg text-yellow-300" id="currentCycleNumber">#1</span>
+          </div>
+          <button id="btnSheets" class="pixel-btn cyan" title="Sincronizar com Google Planilhas">📊 Planilha</button>
+          <button id="btnResetCycle" class="pixel-btn pink" title="Reiniciar progresso do ciclo atual">↺ Reiniciar</button>
         </div>
       </div>
 
-      <div class="header-actions">
-        <div class="cycle-badge" id="goalBadge">
-          <label class="badge-label" for="dailyGoal">Meta diária</label>
-          <input type="number" id="dailyGoal" class="input-text" min="1" max="30" value="6" style="width:60px;padding:2px 6px;text-align:center;">
+      <!-- XP / Nível -->
+      <div class="mt-4 pixel-box-dark p-3" id="xpPanel">
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <span class="font-pixel text-lg text-yellow-300">⭐ NÍVEL <span id="xpLevel">1</span></span>
+          <span class="font-pixel text-sm text-cyan-300"><span id="xpText">0 / 100 XP</span></span>
         </div>
-        <div class="cycle-badge" id="cycleBadge">
-          <span class="badge-label">Ciclo Atual</span>
-          <span class="badge-value" id="currentCycleNumber">#1</span>
-        </div>
-        <button id="btnSheets" class="btn btn-secondary" title="Sincronizar com Google Planilhas">📊 Planilha</button>
-        <button id="btnResetCycle" class="btn btn-secondary" title="Reiniciar progresso do ciclo atual">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
-          </svg>
-          Reiniciar Ciclo
-        </button>
+        <div class="pixel-bar"><div class="pixel-bar-fill xp" id="xpFill" style="width:0%"></div></div>
       </div>
     </header>
 
-    <!-- Main Dashboard Grid -->
-    <main class="dashboard-grid">
-      <!-- Left Column: Matérias e Configurações -->
-      <section class="sidebar-panel">
-        <!-- Card: Cadastrar Matéria -->
-        <div class="glass-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="16"/>
-                <line x1="8" y1="12" x2="16" y2="12"/>
-              </svg>
-              Adicionar Matéria
-            </h2>
-          </div>
-          <form id="subjectForm" class="form-stack">
+    <main class="dashboard-grid grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start">
+
+      <!-- Sidebar -->
+      <section class="sidebar-panel flex flex-col gap-6">
+
+        <div class="glass-card pixel-box p-5">
+          <h2 class="card-title font-pixel text-lg text-green-300 mb-4">➕ NOVA MATÉRIA</h2>
+          <form id="subjectForm" class="form-stack flex flex-col gap-4">
             <div class="form-group">
-              <label for="subjectName">Nome da Disciplina</label>
-              <input type="text" id="subjectName" class="input-text" placeholder="Ex: Português, Direito Constitucional..." required autocomplete="off">
+              <label for="subjectName" class="font-pixel text-sm text-purple-100 block mb-2">NOME</label>
+              <input type="text" id="subjectName" class="pixel-input" placeholder="Português, Constitucional..." required autocomplete="off">
             </div>
 
-            <div class="form-row">
-              <div class="form-group flex-1">
-                <label for="subjectWeight">Peso (Repetições)</label>
-                <div class="weight-picker">
-                  <input type="number" id="subjectWeight" class="input-text weight-number" min="1" max="10" value="1" required>
-                  <span class="weight-hint" id="weightExplanation">Aparecerá 1x no ciclo</span>
-                </div>
+            <div class="flex gap-3 items-start">
+              <div class="flex-1">
+                <label for="subjectWeight" class="font-pixel text-sm text-purple-100 block mb-2">PESO</label>
+                <input type="number" id="subjectWeight" class="pixel-input text-center" min="1" max="10" value="1" required>
+                <span class="weight-hint text-cyan-300 text-sm leading-tight block mt-1" id="weightExplanation">Aparecerá 1x no ciclo</span>
               </div>
-              <div class="form-group">
-                <label for="subjectColor">Cor da Tag</label>
-                <div class="color-picker-wrapper">
-                  <input type="color" id="subjectColor" class="input-color" value="#6366f1">
+              <div>
+                <label for="subjectColor" class="font-pixel text-sm text-purple-100 block mb-2">COR</label>
+                <div class="color-picker-wrapper w-14 h-12 border-4 border-black overflow-hidden">
+                  <input type="color" id="subjectColor" class="pixel-color" value="#6366f1">
                 </div>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block" id="btnAddSubject">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Incluir no Ciclo
-            </button>
+            <button type="submit" class="pixel-btn green w-full" id="btnAddSubject">+ Incluir no ciclo</button>
           </form>
         </div>
 
-        <!-- Card: Matérias Cadastradas -->
-        <div class="glass-card subjects-list-card">
-          <div class="card-header flex-between">
-            <h2 class="card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-              Matérias Cadastradas
-            </h2>
-            <span class="badge-counter" id="subjectCountBadge">0 matérias</span>
+        <div class="glass-card subjects-list-card pixel-box p-5">
+          <div class="flex items-center justify-between mb-4 gap-2">
+            <h2 class="card-title font-pixel text-lg text-green-300">📚 MATÉRIAS</h2>
+            <span class="pixel-tag" id="subjectCountBadge">0 matérias</span>
           </div>
-          
-          <div id="subjectsContainer" class="subjects-list">
-            <!-- Dynamic subjects listed here -->
-          </div>
-          
-          <div class="card-footer-note">
-            💡 <em>Matérias com peso 2+ aparecerão na 1ª coluna e novamente nas rodadas abaixo.</em>
-          </div>
+          <div id="subjectsContainer" class="subjects-list flex flex-col gap-3 max-h-96 overflow-y-auto pr-1"></div>
+          <p class="card-footer-note text-purple-100 text-base mt-4 pt-3 border-t-4 border-dashed border-purple-800">
+            💡 Matérias com peso 2+ aparecem na 1ª coluna e de novo nas rodadas abaixo.
+          </p>
         </div>
       </section>
 
-      <!-- Right Column: Ciclo Vertical Ativo -->
-      <section class="main-content">
-        <!-- Active Subject Banner -->
-        <div class="active-focus-card" id="activeFocusCard">
-          <div class="focus-status-label">Em Estudo Agora</div>
-          <div class="focus-body">
-            <div class="focus-info">
-              <div class="focus-meta">
-                <span class="focus-step-num" id="focusStepNumber">Bloco 1 de 4</span>
-                <span class="focus-round-tag" id="focusRoundTag">1ª Passagem</span>
-                <span class="focus-round-tag" id="focusDayTag">Dia 1 · 0/6</span>
+      <!-- Conteúdo principal -->
+      <section class="main-content flex flex-col gap-6">
+
+        <!-- Missão atual -->
+        <div class="active-focus-card pixel-box p-5" id="activeFocusCard" style="background:#3b2a82">
+          <div class="font-pixel text-sm text-yellow-300 mb-3 blink">▶ MISSÃO ATUAL</div>
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="pixel-tag" id="focusStepNumber">Bloco 1 de 4</span>
+                <span class="pixel-tag" id="focusRoundTag">1ª Passagem</span>
+                <span class="pixel-tag" id="focusDayTag">Dia 1 · 0/6</span>
               </div>
-              <h2 class="focus-subject-name" id="focusSubjectName">Selecione ou inicie uma matéria</h2>
+              <h2 class="focus-subject-name font-pixel text-2xl sm:text-3xl text-white leading-snug" id="focusSubjectName">Selecione ou inicie uma matéria</h2>
             </div>
-            <div class="focus-actions">
-              <button id="btnCompleteCurrent" class="btn btn-success btn-lg">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Concluir e Próxima
-              </button>
-            </div>
+            <button id="btnCompleteCurrent" class="pixel-btn green lg">✔ Concluir e Próxima</button>
           </div>
 
-          <!-- Progress Bar -->
           <div class="progress-section">
-            <div class="progress-labels">
-              <span>Progresso da Rodada Vertical</span>
+            <div class="flex justify-between font-pixel text-sm text-purple-100 mb-2 gap-2">
+              <span>PROGRESSO DO CICLO</span>
               <span id="progressPercentage">0%</span>
             </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
+            <div class="pixel-bar"><div class="pixel-bar-fill" id="progressFill" style="width:0%"></div></div>
           </div>
         </div>
 
-        <!-- Vertical Study Cycle List -->
-        <div class="glass-card vertical-cycle-panel">
-          <div class="card-header flex-between">
+        <!-- Trilha -->
+        <div class="glass-card vertical-cycle-panel pixel-box p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
-              <h2 class="card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="8" y1="6" x2="21" y2="6"/>
-                  <line x1="8" y1="12" x2="21" y2="12"/>
-                  <line x1="8" y1="18" x2="21" y2="18"/>
-                  <line x1="3" y1="6" x2="3.01" y2="6"/>
-                  <line x1="3" y1="12" x2="3.01" y2="12"/>
-                  <line x1="3" y1="18" x2="3.01" y2="18"/>
-                </svg>
-                Trilha Vertical do Ciclo
-              </h2>
-              <p class="card-desc">As matérias são distribuídas em ordem vertical por rodadas de peso</p>
+              <h2 class="card-title font-pixel text-lg text-green-300">🗺️ MAPA DE FASES</h2>
+              <p class="card-desc text-purple-100 text-base mt-2">Matérias em ordem vertical, por rodadas de peso</p>
             </div>
-            <div class="cycle-legend">
-              <span class="legend-item"><span class="legend-dot status-done"></span> Feito</span>
-              <span class="legend-item"><span class="legend-dot status-active"></span> Atual</span>
-              <span class="legend-item"><span class="legend-dot status-pending"></span> Pendente</span>
+            <div class="cycle-legend flex gap-3 font-pixel text-lg text-purple-100">
+              <span class="legend-item flex items-center gap-1"><i class="inline-block w-3 h-3 bg-green-400 border-2 border-black"></i>FEITO</span>
+              <span class="legend-item flex items-center gap-1"><i class="inline-block w-3 h-3 bg-yellow-300 border-2 border-black"></i>ATUAL</span>
+              <span class="legend-item flex items-center gap-1"><i class="inline-block w-3 h-3 bg-purple-500 border-2 border-black"></i>PENDENTE</span>
             </div>
           </div>
-
-          <div id="cycleContainer" class="vertical-cycle-timeline">
-            <!-- Timeline elements dynamically generated -->
-          </div>
+          <div id="cycleContainer" class="vertical-cycle-timeline"></div>
         </div>
       </section>
     </main>
 
-    <!-- Modal de Conclusão do Ciclo -->
+    <!-- Modal de conclusão -->
     <div id="congratsModal" class="modal-overlay hidden">
-      <div class="modal-content glass-card">
-        <div class="modal-icon">🎉</div>
-        <h2 class="modal-title">Ciclo Concluído com Sucesso!</h2>
-        <p class="modal-text">Você completou todas as rodadas e blocos do ciclo de estudos atual. Deseja reiniciar a trilha para o próximo ciclo?</p>
-        <div class="modal-actions">
-          <button id="btnModalNextCycle" class="btn btn-primary btn-lg">Iniciar Novo Ciclo</button>
-          <button id="btnModalClose" class="btn btn-secondary">Apenas Fechar</button>
+      <div class="modal-content pixel-box">
+        <div class="text-6xl mb-4 floaty">🏆</div>
+        <h2 class="modal-title font-pixel text-2xl text-yellow-300 mb-4 leading-snug">CICLO COMPLETO!</h2>
+        <p class="modal-text text-base text-purple-100 mb-6">Você zerou todas as fases deste ciclo. Iniciar o próximo ciclo?</p>
+        <div class="modal-actions flex flex-wrap justify-center gap-3">
+          <button id="btnModalNextCycle" class="pixel-btn green lg">Novo ciclo</button>
+          <button id="btnModalClose" class="pixel-btn gray">Fechar</button>
         </div>
       </div>
     </div>
@@ -207,6 +160,7 @@
 
   <script src="app.js"></script>
   <script src="sheets.js"></script>
+  <script src="gamify.js?v=5"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
