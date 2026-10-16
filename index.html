@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body class="min-h-screen">
   <div class="app-shell max-w-6xl mx-auto px-4 pt-6 pb-16">
@@ -56,51 +56,20 @@
       </div>
     </header>
 
-    <main class="dashboard-grid grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start">
+    <!-- Navegação de Abas -->
+    <nav class="tab-nav flex flex-wrap gap-3 mb-6" role="tablist">
+      <button id="tabBtnCycle" class="tab-btn active-tab" role="tab" aria-selected="true" aria-controls="tabCycleView">
+        🗺️ Trilha do Ciclo
+      </button>
+      <button id="tabBtnSubjects" class="tab-btn" role="tab" aria-selected="false" aria-controls="tabSubjectsView">
+        📚 Gerenciar Matérias
+      </button>
+    </nav>
 
-      <!-- Sidebar -->
-      <section class="sidebar-panel flex flex-col gap-6">
+    <main class="dashboard-content">
 
-        <div class="glass-card pixel-box p-5">
-          <h2 class="card-title font-pixel text-lg text-green-300 mb-4">➕ NOVA MATÉRIA</h2>
-          <form id="subjectForm" class="form-stack flex flex-col gap-4">
-            <div class="form-group">
-              <label for="subjectName" class="font-pixel text-sm text-purple-100 block mb-2">NOME</label>
-              <input type="text" id="subjectName" class="pixel-input" placeholder="Português, Constitucional..." required autocomplete="off">
-            </div>
-
-            <div class="flex gap-3 items-start">
-              <div class="flex-1">
-                <label for="subjectWeight" class="font-pixel text-sm text-purple-100 block mb-2">PESO</label>
-                <input type="number" id="subjectWeight" class="pixel-input text-center" min="1" max="10" value="1" required>
-                <span class="weight-hint text-cyan-300 text-sm leading-tight block mt-1" id="weightExplanation">Aparecerá 1x no ciclo</span>
-              </div>
-              <div>
-                <label for="subjectColor" class="font-pixel text-sm text-purple-100 block mb-2">COR</label>
-                <div class="color-picker-wrapper w-14 h-12 border-4 border-black overflow-hidden">
-                  <input type="color" id="subjectColor" class="pixel-color" value="#6366f1">
-                </div>
-              </div>
-            </div>
-
-            <button type="submit" class="pixel-btn green w-full" id="btnAddSubject">+ Incluir no ciclo</button>
-          </form>
-        </div>
-
-        <div class="glass-card subjects-list-card pixel-box p-5">
-          <div class="flex items-center justify-between mb-4 gap-2">
-            <h2 class="card-title font-pixel text-lg text-green-300">📚 MATÉRIAS</h2>
-            <span class="pixel-tag" id="subjectCountBadge">0 matérias</span>
-          </div>
-          <div id="subjectsContainer" class="subjects-list flex flex-col gap-3 max-h-96 overflow-y-auto pr-1"></div>
-          <p class="card-footer-note text-purple-100 text-base mt-4 pt-3 border-t-4 border-dashed border-purple-800">
-            💡 Matérias com peso 2+ aparecem na 1ª coluna e de novo nas rodadas abaixo.
-          </p>
-        </div>
-      </section>
-
-      <!-- Conteúdo principal -->
-      <section class="main-content flex flex-col gap-6">
+      <!-- Aba 1: Trilha do Ciclo (Visão 100% focada nas matérias em ciclo) -->
+      <section id="tabCycleView" class="tab-view flex flex-col gap-6" role="tabpanel" aria-labelledby="tabBtnCycle">
 
         <!-- Missão atual -->
         <div class="active-focus-card pixel-box p-5" id="activeFocusCard" style="background:#3b2a82">
@@ -142,6 +111,48 @@
           <div id="cycleContainer" class="vertical-cycle-timeline"></div>
         </div>
       </section>
+
+      <!-- Aba 2: Gerenciar Matérias (Inclusão e Lista de Disciplinas) -->
+      <section id="tabSubjectsView" class="tab-view hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-start" role="tabpanel" aria-labelledby="tabBtnSubjects">
+
+        <div class="glass-card pixel-box p-5">
+          <h2 class="card-title font-pixel text-lg text-green-300 mb-4">➕ NOVA MATÉRIA</h2>
+          <form id="subjectForm" class="form-stack flex flex-col gap-4">
+            <div class="form-group">
+              <label for="subjectName" class="font-pixel text-sm text-purple-100 block mb-2">NOME</label>
+              <input type="text" id="subjectName" class="pixel-input" placeholder="Português, Constitucional..." required autocomplete="off">
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <div class="flex-1">
+                <label for="subjectWeight" class="font-pixel text-sm text-purple-100 block mb-2">PESO</label>
+                <input type="number" id="subjectWeight" class="pixel-input text-center" min="1" max="10" value="1" required>
+                <span class="weight-hint text-cyan-300 text-sm leading-tight block mt-1" id="weightExplanation">Aparecerá 1x no ciclo</span>
+              </div>
+              <div>
+                <label for="subjectColor" class="font-pixel text-sm text-purple-100 block mb-2">COR</label>
+                <div class="color-picker-wrapper w-14 h-12 border-4 border-black overflow-hidden">
+                  <input type="color" id="subjectColor" class="pixel-color" value="#6366f1">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="pixel-btn green w-full" id="btnAddSubject">+ Incluir no ciclo</button>
+          </form>
+        </div>
+
+        <div class="glass-card subjects-list-card pixel-box p-5">
+          <div class="flex items-center justify-between mb-4 gap-2">
+            <h2 class="card-title font-pixel text-lg text-green-300">📚 MATÉRIAS CADASTRADAS</h2>
+            <span class="pixel-tag" id="subjectCountBadge">0 matérias</span>
+          </div>
+          <div id="subjectsContainer" class="subjects-list flex flex-col gap-3 max-h-96 overflow-y-auto pr-1"></div>
+          <p class="card-footer-note text-purple-100 text-base mt-4 pt-3 border-t-4 border-dashed border-purple-800">
+            💡 Matérias com peso 2+ aparecem na 1ª coluna e de novo nas rodadas abaixo.
+          </p>
+        </div>
+      </section>
+
     </main>
 
     <!-- Modal de conclusão -->
@@ -160,7 +171,7 @@
 
   <script src="app.js"></script>
   <script src="sheets.js"></script>
-  <script src="gamify.js?v=5"></script>
+  <script src="gamify.js?v=6"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});

@@ -238,3 +238,38 @@ input[type="color"].pixel-color {
 }
 .step-instance-tag, .subject-weight-tag { font-size: 14px; }
 .step-status-tag, .pixel-tag { font-size: 14px; }
+
+/* ---------- Navegação por Abas (Trilha vs Gerenciar Matérias) ---------- */
+.tab-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.tab-btn {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px 20px;
+  border: 4px solid var(--px-ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
+}
+.tab-btn.active-tab {
+  background: var(--px-yellow) !important;
+  color: var(--px-ink) !important;
+  box-shadow: inset -4px -4px 0 rgba(0,0,0,0.25), inset 4px 4px 0 rgba(255,255,255,0.5), 0 5px 0 var(--px-ink);
+  transform: translateY(-2px);
+}
+.tab-btn:not(.active-tab) {
+  background: var(--px-panel-2) !important;
+  color: var(--px-muted) !important;
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.05), 0 5px 0 var(--px-ink);
+}
+.tab-btn:hover:not(.active-tab) {
+  color: #fff !important;
+  filter: brightness(1.15);
+}
+

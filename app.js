@@ -128,6 +128,43 @@ function initApp() {
 }
 
 function setupEventListeners() {
+  // Alternância de abas (Trilha do Ciclo vs Gerenciar Matérias)
+  const tabBtnCycle = document.getElementById('tabBtnCycle');
+  const tabBtnSubjects = document.getElementById('tabBtnSubjects');
+  const tabCycleView = document.getElementById('tabCycleView');
+  const tabSubjectsView = document.getElementById('tabSubjectsView');
+
+  function switchTab(tab) {
+    if (tab === 'cycle') {
+      if (tabCycleView) tabCycleView.classList.remove('hidden');
+      if (tabSubjectsView) tabSubjectsView.classList.add('hidden');
+      if (tabBtnCycle) {
+        tabBtnCycle.classList.add('active-tab');
+        tabBtnCycle.setAttribute('aria-selected', 'true');
+      }
+      if (tabBtnSubjects) {
+        tabBtnSubjects.classList.remove('active-tab');
+        tabBtnSubjects.setAttribute('aria-selected', 'false');
+      }
+    } else {
+      if (tabCycleView) tabCycleView.classList.add('hidden');
+      if (tabSubjectsView) tabSubjectsView.classList.remove('hidden');
+      if (tabBtnSubjects) {
+        tabBtnSubjects.classList.add('active-tab');
+        tabBtnSubjects.setAttribute('aria-selected', 'true');
+      }
+      if (tabBtnCycle) {
+        tabBtnCycle.classList.remove('active-tab');
+        tabBtnCycle.setAttribute('aria-selected', 'false');
+      }
+    }
+  }
+
+  if (tabBtnCycle && tabBtnSubjects) {
+    tabBtnCycle.addEventListener('click', () => switchTab('cycle'));
+    tabBtnSubjects.addEventListener('click', () => switchTab('subjects'));
+  }
+
   // Formulário de adicionar matéria
   const form = document.getElementById('subjectForm');
   const weightInput = document.getElementById('subjectWeight');
