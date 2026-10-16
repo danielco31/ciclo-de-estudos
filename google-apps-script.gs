@@ -11,7 +11,7 @@ function doPost(e) {
 
   var sh = ss.getSheetByName('Progresso') || ss.insertSheet('Progresso');
   sh.clear();
-  sh.appendRow(['Ordem', 'Matéria', 'Passagem', 'Dia', 'Concluído', 'Concluído em']);
+  sh.appendRow(['Ordem', 'Matéria', 'Passagem', 'Bloco', 'Concluído', 'Concluído em']);
   if (data.rows.length) {
     sh.getRange(2, 1, data.rows.length, 6).setValues(data.rows);
   }

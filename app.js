@@ -510,11 +510,11 @@ function renderVerticalTimeline() {
 
   appState.cycleList.forEach((step, index) => {
     if (index % getDailyGoal() === 0) {
-      const dayN = index / getDailyGoal() + 1;
-      const inDay = Math.min(getDailyGoal(), appState.cycleList.length - index);
+      const blockN = Math.floor(index / getDailyGoal()) + 1;
+      const inBlock = Math.min(getDailyGoal(), appState.cycleList.length - index);
       html += `
         <div class="round-separator">
-          <span class="round-title-tag" style="color:#6ee7b7;background:rgba(16,185,129,0.14);border-color:rgba(16,185,129,0.3)">📅 Dia ${dayN} — bloco de ${inDay} matérias</span>
+          <span class="round-title-tag" style="color:#6ee7b7;background:rgba(16,185,129,0.14);border-color:rgba(16,185,129,0.3)">📦 Bloco ${blockN} (${inBlock} matérias)</span>
           <div class="round-line"></div>
         </div>
       `;
