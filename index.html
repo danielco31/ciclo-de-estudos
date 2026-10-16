@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body class="min-h-screen">
   <div class="app-shell max-w-6xl mx-auto px-4 pt-6 pb-16">
@@ -33,10 +33,6 @@
         </div>
 
         <div class="header-actions flex flex-wrap items-center gap-3">
-          <div class="cycle-badge pixel-box-dark px-3 py-2 flex items-center gap-2" id="goalBadge">
-            <label class="badge-label font-pixel text-sm text-cyan-300" for="dailyGoal">META/DIA</label>
-            <input type="number" id="dailyGoal" class="pixel-input" min="1" max="30" value="6" style="width:70px;text-align:center;">
-          </div>
           <div class="cycle-badge pixel-box-dark px-3 py-2 flex items-center gap-2" id="cycleBadge">
             <span class="badge-label font-pixel text-sm text-cyan-300">CICLO</span>
             <span class="badge-value font-pixel text-lg text-yellow-300" id="currentCycleNumber">#1</span>
@@ -90,6 +86,20 @@
 
       <!-- Aba 2: Gerenciar Matérias (Inclusão e Lista de Disciplinas) -->
       <section id="tabSubjectsView" class="tab-view hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-start" role="tabpanel" aria-labelledby="tabBtnSubjects">
+
+        <!-- Card: Meta Diária -->
+        <div class="glass-card pixel-box p-5 col-span-1 md:col-span-2">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="card-title font-pixel text-lg text-yellow-300 mb-1">🎯 META DIÁRIA DO CICLO</h2>
+              <p class="text-purple-100 text-base">Defina quantas matérias você estuda por dia (o mapa de fases divide o ciclo nesses blocos diários):</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="dailyGoal" class="font-pixel text-sm text-cyan-300 whitespace-nowrap">MATÉRIAS / DIA:</label>
+              <input type="number" id="dailyGoal" class="pixel-input text-center font-bold" min="1" max="30" value="6" style="width: 85px; font-size: 20px;">
+            </div>
+          </div>
+        </div>
 
         <div class="glass-card pixel-box p-5">
           <h2 class="card-title font-pixel text-lg text-green-300 mb-4">➕ NOVA MATÉRIA</h2>
@@ -147,7 +157,7 @@
 
   <script src="app.js"></script>
   <script src="sheets.js"></script>
-  <script src="gamify.js?v=7"></script>
+  <script src="gamify.js?v=8"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
