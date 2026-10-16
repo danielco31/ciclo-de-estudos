@@ -1,12 +1,14 @@
 /**
  * Sincronização com Google Planilhas (via Google Apps Script).
- * A URL do Web App fica salva no navegador. Veja o README para o passo a passo.
+ * Carrega automaticamente os dados da planilha ao abrir o aplicativo.
  */
 const SHEET_URL_KEY = 'ciclo_sheet_url';
+const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyD9FOle2dBMGmUGQ7FOw9REe9cFjT6N5CihRhol2mYhi6Y7aCLezCdUPCBNBrpDSRY/exec';
+
 let sheetPushTimer = null;
 
 function getSheetUrl() {
-  return localStorage.getItem(SHEET_URL_KEY) || '';
+  return localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
 }
 
 function buildSheetPayload() {
@@ -33,6 +35,7 @@ function scheduleSheetPush() {
 async function pushToSheet(showMsg) {
   const url = getSheetUrl();
   if (!url) return;
+  appState.lastModified = Date.now();
   try {
     await fetch(url, {
       method: 'POST',
@@ -40,20 +43,20 @@ async function pushToSheet(showMsg) {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(buildSheetPayload())
     });
-    if (showMsg) alert('Progresso enviado para a planilha!');
+    if (showMsg) alert('Progresso enviado com sucesso para a planilha!');
   } catch (err) {
     if (showMsg) alert('Falha ao enviar para a planilha: ' + err.message);
   }
 }
 
-async function pullFromSheet() {
+async function pullFromSheet(showMsg) {
   const url = getSheetUrl();
   if (!url) return;
   try {
     const res = await fetch(url);
     const data = await res.json();
-    if (!data || !Array.isArray(data.subjects)) {
-      alert('A planilha ainda não tem dados salvos.');
+    if (!data || !Array.isArray(data.subjects) || data.subjects.length === 0) {
+      if (showMsg) alert('A planilha ainda não possui matérias cadastradas.');
       return;
     }
     appState = data;
@@ -61,33 +64,73 @@ async function pullFromSheet() {
     const goalInput = document.getElementById('dailyGoal');
     if (goalInput) goalInput.value = getDailyGoal();
     renderAll();
-    alert('Dados carregados da planilha!');
+    if (showMsg) alert(`Dados carregados da planilha com sucesso! (${data.subjects.length} matérias no ciclo)`);
   } catch (err) {
-    alert('Falha ao carregar da planilha: ' + err.message);
+    if (showMsg) alert('Falha ao carregar da planilha: ' + err.message);
+  }
+}
+
+/**
+ * Sincronização automática ao abrir o app:
+ * Puxa os dados da planilha automaticamente para que celular e PC fiquem sempre atualizados.
+ */
+async function autoSyncFromSheet() {
+  const url = getSheetUrl();
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && Array.isArray(data.subjects) && data.subjects.length > 0) {
+      const localCount = (appState && appState.subjects) ? appState.subjects.length : 0;
+      const isLocalExample = (localCount === 3 && appState.subjects[0].name === 'Português');
+      const sheetHasMore = data.subjects.length > localCount;
+      const sheetLastMod = data.lastModified || 0;
+      const localLastMod = (appState && appState.lastModified) || 0;
+
+      // Atualiza se estiver no exemplo inicial, ou se a planilha tiver mais matérias, ou se a planilha for mais recente/igual
+      if (isLocalExample || sheetHasMore || sheetLastMod >= localLastMod) {
+        appState = data;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        const goalInput = document.getElementById('dailyGoal');
+        if (goalInput) goalInput.value = getDailyGoal();
+        renderAll();
+        console.log(`[Planilha] Sincronização automática concluída: ${data.subjects.length} matérias carregadas.`);
+      }
+    }
+  } catch (err) {
+    console.warn('[Planilha] Não foi possível sincronizar em segundo plano:', err);
   }
 }
 
 function openSheetMenu() {
   const current = getSheetUrl();
-  if (!current) {
-    const url = prompt('Cole a URL do Web App do Google Apps Script (termina em /exec):');
-    if (!url) return;
-    localStorage.setItem(SHEET_URL_KEY, url.trim());
-    pushToSheet(true);
-    return;
-  }
-  const opt = prompt('Planilha conectada.\n1 = Enviar agora\n2 = Carregar da planilha (substitui dados locais)\n3 = Trocar URL\n4 = Desconectar');
-  if (opt === '1') pushToSheet(true);
-  else if (opt === '2') pullFromSheet();
+  const opt = prompt(
+    '📊 SINCRONIZAÇÃO COM GOOGLE PLANILHAS\n\n' +
+    '1 = Carregar da planilha agora (atualizar este aparelho)\n' +
+    '2 = Enviar dados deste aparelho para a planilha\n' +
+    '3 = Trocar URL da planilha\n' +
+    '4 = Desconectar planilha\n\n' +
+    'Digite o número da opção desejada:'
+  );
+
+  if (opt === '1') pullFromSheet(true);
+  else if (opt === '2') pushToSheet(true);
   else if (opt === '3') {
-    const url = prompt('Nova URL do Web App:', current);
-    if (url) localStorage.setItem(SHEET_URL_KEY, url.trim());
+    const url = prompt('Cole a nova URL do Web App (termina em /exec):', current);
+    if (url) {
+      localStorage.setItem(SHEET_URL_KEY, url.trim());
+      pullFromSheet(true);
+    }
   } else if (opt === '4') {
     localStorage.removeItem(SHEET_URL_KEY);
+    alert('Planilha desconectada deste aparelho.');
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btnSheets');
   if (btn) btn.addEventListener('click', openSheetMenu);
+  
+  // Executa a sincronização automática com a planilha ao abrir
+  setTimeout(autoSyncFromSheet, 600);
 });
