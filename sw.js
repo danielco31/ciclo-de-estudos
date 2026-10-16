@@ -1,4 +1,4 @@
-const CACHE = 'ciclo-v8';
+const CACHE = 'ciclo-v9';
 const FILES = ['./', './index.html', './styles.css', './app.js', './sheets.js', './gamify.js', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
