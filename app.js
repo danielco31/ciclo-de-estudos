@@ -352,21 +352,25 @@ function renderHeader() {
   }
 }
 
-function getSubjectCycleProgress(subjectId) {
-  const steps = appState.cycleList.filter(s => s.subjectId === subjectId);
-  const total = steps.length;
-  const completed = steps.filter(s => s.completed).length;
-  const isFullyCompleted = (total > 0 && completed === total);
-  return { total, completed, isFullyCompleted };
+function toggleSubjectFlag(subjectId, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const subj = appState.subjects.find(s => s.id === subjectId);
+  if (!subj) return;
+  subj.flagged = !subj.flagged;
+  saveState();
+  renderAll();
 }
 
-function renderSubjectFlagBadge(prog) {
-  if (prog.isFullyCompleted) {
-    return `<span class="subject-flag-badge done" title="Todas as repetições desta matéria foram concluídas neste ciclo">🏁 Toda Concluída (${prog.completed}/${prog.total})</span>`;
-  } else if (prog.completed > 0) {
-    return `<span class="subject-flag-badge in-progress" title="${prog.completed} de ${prog.total} repetições concluídas">🚩 Em Andamento (${prog.completed}/${prog.total})</span>`;
+function renderSubjectFlagButton(subjectId) {
+  const subj = appState.subjects.find(s => s.id === subjectId);
+  const isFlagged = subj ? !!subj.flagged : false;
+  if (isFlagged) {
+    return `<button type="button" class="subject-flag-btn active" onclick="toggleSubjectFlag('${subjectId}', event)" title="Matéria marcada para seu controle próprio. Clique para remover a flag.">🚩 Flag <span class="flag-remove-x">✕</span></button>`;
   } else {
-    return `<span class="subject-flag-badge pending" title="Nenhuma repetição concluída ainda">🚩 0/${prog.total} concluída</span>`;
+    return `<button type="button" class="subject-flag-btn inactive" onclick="toggleSubjectFlag('${subjectId}', event)" title="Clique para marcar esta matéria com a flag de controle">🏳️ Marcar flag</button>`;
   }
 }
 
@@ -385,8 +389,7 @@ function renderSubjectsList() {
   }
 
   container.innerHTML = appState.subjects.map(subj => {
-    const prog = getSubjectCycleProgress(subj.id);
-    const flagHtml = renderSubjectFlagBadge(prog);
+    const flagBtn = renderSubjectFlagButton(subj.id);
     return `
       <div class="subject-item">
         <div class="subject-info-col">
@@ -396,7 +399,7 @@ function renderSubjectsList() {
               <span class="subject-title">${escapeHtml(subj.name)}</span>
               <span class="subject-weight-tag">Peso ${subj.weight} (${subj.weight}x no ciclo)</span>
             </div>
-            <div class="mt-1">${flagHtml}</div>
+            <div class="mt-1">${flagBtn}</div>
           </div>
         </div>
         <button class="btn-icon-danger" title="Excluir Matéria" onclick="deleteSubject('${subj.id}')">
@@ -545,11 +548,13 @@ function renderVerticalTimeline() {
       statusText = 'Em Estudo';
     }
 
-    const prog = getSubjectCycleProgress(step.subjectId);
-    const flagHtml = renderSubjectFlagBadge(prog);
+    const subj = appState.subjects.find(s => s.id === step.subjectId);
+    const isFlagged = subj ? !!subj.flagged : false;
+    const flagBtn = renderSubjectFlagButton(step.subjectId);
+    const flaggedCardClass = isFlagged ? ' is-flagged-subject' : '';
 
     html += `
-      <div class="cycle-step-card ${statusClass}" id="step-${index}" onclick="toggleStepCompleted(${index})" title="Clique para alternar status concluído/pendente">
+      <div class="cycle-step-card ${statusClass}${flaggedCardClass}" id="step-${index}" onclick="toggleStepCompleted(${index})" title="Clique para alternar status concluído/pendente">
         <div class="step-order-badge">${step.globalOrder}</div>
         <div class="step-details">
           <div class="step-main-info flex-wrap">
@@ -558,7 +563,7 @@ function renderVerticalTimeline() {
               <span class="step-subject-name">${escapeHtml(step.subjectName)}</span>
               <span class="step-instance-tag">${step.round}ª vez no ciclo</span>
             </div>
-            ${flagHtml}
+            ${flagBtn}
           </div>
           <div class="step-status-tag">${statusText}</div>
         </div>

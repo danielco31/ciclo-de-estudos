@@ -273,8 +273,8 @@ input[type="color"].pixel-color {
   filter: brightness(1.15);
 }
 
-/* ---------- Flag de status/conclusão da matéria no ciclo ---------- */
-.subject-flag-badge {
+/* ---------- Flag de marcação da matéria (controle manual do usuário) ---------- */
+.subject-flag-btn {
   font-family: 'Roboto', sans-serif;
   font-size: 13px;
   font-weight: 700;
@@ -284,23 +284,39 @@ input[type="color"].pixel-color {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  cursor: pointer;
+  background: transparent;
+  transition: transform 0.08s steps(2), filter 0.08s ease;
   white-space: nowrap;
 }
-.subject-flag-badge.done {
-  background: rgba(91, 255, 110, 0.16);
-  border-color: var(--px-green);
-  color: #5bff6e;
-  box-shadow: 0 0 10px rgba(91, 255, 110, 0.2);
+.subject-flag-btn.active {
+  background: rgba(255, 77, 109, 0.2);
+  border-color: #ff4d6d;
+  color: #ff4d6d;
+  box-shadow: 0 0 8px rgba(255, 77, 109, 0.35);
 }
-.subject-flag-badge.in-progress {
-  background: rgba(255, 210, 63, 0.16);
-  border-color: var(--px-yellow);
-  color: #ffd23f;
+.subject-flag-btn.active:hover {
+  background: rgba(255, 77, 109, 0.35);
+  filter: brightness(1.2);
 }
-.subject-flag-badge.pending {
-  background: rgba(207, 196, 242, 0.08);
+.subject-flag-btn.inactive {
+  background: rgba(255, 255, 255, 0.04);
   border-color: #4b3a8f;
   color: var(--px-muted);
+}
+.subject-flag-btn.inactive:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffd23f;
+  color: #ffd23f;
+}
+.flag-remove-x {
+  font-size: 12px;
+  font-weight: 900;
+  margin-left: 2px;
+  opacity: 0.85;
+}
+.cycle-step-card.is-flagged-subject {
+  border-left: 6px solid #ff4d6d;
 }
 
 
